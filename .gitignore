@@ -1,0 +1,7 @@
+/activiti-app/.settings
+/.settings
+/activiti-app/*.classpath
+/activiti-app/target
+/activiti-module/.settings
+/activiti-module/*.classpath
+/activiti-module/target
