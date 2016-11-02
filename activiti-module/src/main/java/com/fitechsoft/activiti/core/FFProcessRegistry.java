@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,10 @@ import org.springframework.stereotype.Service;
 public class FFProcessRegistry {
 	@Autowired
 	RepositoryService repositoryService;
-	
+	@Autowired
+    RuntimeService runtimeService;
+	@Autowired
+	FFProcess fFProcess;
 	private Map<String, FFProcess> processMap;
 	
 //    private static FFProcessRegistry registry;
@@ -36,12 +40,23 @@ public class FFProcessRegistry {
 //    }
 	
 	
-    public void register() {
-    	if(null == processMap){
-    		processMap = new HashMap<String, FFProcess>();
+    public void init(boolean bool) {
+    	if(bool){
     		List<FFProcess> processList = this.listProcessDefinition();
+    		processMap = new HashMap<String, FFProcess>();
         	for (FFProcess ffProcess : processList) {
-        		this.processMap.put(ffProcess.getProcDefId(), ffProcess);
+        		//TODO 暂时强行注入runtimeService
+        		ffProcess.setRuntimeService(runtimeService);
+        		this.processMap.put(ffProcess.getProcessDefId(), ffProcess);
+    		}
+    	}else{
+    		if(null == processMap){
+    			List<FFProcess> processList = this.listProcessDefinition();
+        		processMap = new HashMap<String, FFProcess>();
+            	for (FFProcess ffProcess : processList) {
+            		ffProcess.setRuntimeService(runtimeService);
+            		this.processMap.put(ffProcess.getProcessDefId(), ffProcess);
+        		}
     		}
     	}
     }
@@ -96,11 +111,42 @@ public class FFProcessRegistry {
         return processes;
     }
     public FFProcess getRegisteredProcessesById(String procDefId) {
-    	this.register();
+    	this.init(false);
         return processMap.get(procDefId);
     }
     
+    /**
+     * 删除流程定义
+     * @param procssDefId
+     * @return
+     */
+    public FFProcess destroyRegisteredProcessesById(String procssDefId) {
+    	FFProcess ffProcess =processMap.get(procssDefId);
+    	ffProcess.setRepositoryService(repositoryService);
+    	ffProcess.delProcDeployment();
+		//删除内存中的流程定义
+    	this.processMap.remove(procssDefId);
+    	return ffProcess;
+    }
+    /**
+     * 创建流程定义
+     * @param fileName
+     * @return
+     */
+    public String createRegisteredProcesses(String fileName){
+    	fFProcess.setRepositoryService(repositoryService);
+    	fFProcess.setProcessName(fileName);
+		fFProcess.setProcessResource("bpmn/"+fileName);
+		String deploymentId = fFProcess.deploy();
+		init(true);
+		return deploymentId;
+    }
 
+    /**
+     * 获得pbmn资源路径
+     * @param bpmnPath
+     * @return
+     */
     public List<String> listBpmnFiles(String bpmnPath) {
 		List<String> bpmnFiles= new ArrayList<String>();
 		try {

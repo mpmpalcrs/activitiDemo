@@ -45,7 +45,11 @@
 		    		<td>${toDo.assingedTime?string("yyyy-MM-dd HH:mm:ss")}</td>
 		    		<td>${toDo.assignee!''}</td>
 		    		<td>
-		    			<input type="button" value="处理" onclick="javascript:window.open('${basePath}/report/handleTask?task_id=${toDo.taskId!''}')"/>
+		    			<#if toDo.assignee!''>
+		    				<input type="button" value="处理" onclick="javascript:window.open('${basePath}/report/handleTask?task_id=${toDo.taskId!''}')"/>
+		    			<#else>
+		    				<input type="button" value="流程指派人" onclick="javascript:window.open('${basePath}/report/currentTasks?instanceID=${toDo.procInstId!''}')"/>
+		    			</#if>
 		    		</td>
 		    	</tr>
     		</#list>

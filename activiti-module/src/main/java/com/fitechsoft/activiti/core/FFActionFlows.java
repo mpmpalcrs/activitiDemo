@@ -1,6 +1,6 @@
-package com.fitechsoft.activiti.domain;
+package com.fitechsoft.activiti.core;
 
-public class ActionFlows {
+public class FFActionFlows {
 	private String name;
 	
 	private String action;

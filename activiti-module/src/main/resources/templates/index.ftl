@@ -32,12 +32,12 @@
 		<#list processList as process>
 			<tr>
 				<td>${process.deploymentId!'' }</td>
-	    		<td>${process.procDefId!'' }</td>
+	    		<td>${process.processDefId!'' }</td>
 	    		<td>${process.processName!''}</td>
 	    		<td>${process.processResource!''}</td>
 	    		<td>
-	    			<input name="delProc" type="button" value="删除" val="${process.deploymentId }"/>
-	    			<input name="taskTodo" type="button" value="待办任务" val="${process.procDefId }"/>
+	    			<input name="delProc" type="button" value="删除" val="${process.processDefId }"/>
+	    			<input name="taskTodo" type="button" value="待办任务" val="${process.processDefId }"/>
 	    		</td>
 	    	</tr>
 		</#list>
@@ -67,7 +67,7 @@
 				url : '${basePath}/report/delFlows',
 				dataType : 'json',
 				data : {
-					"deploymentId" : $(this).attr("val")
+					"processDefId" : $(this).attr("val")
 				},
 				success:function(obj){
 					alert(obj.retObj);

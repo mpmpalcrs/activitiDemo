@@ -61,4 +61,8 @@ public class FFInstance extends FDObject {
 	public void setInstance(ProcessInstance instance) {
 		this.instance = instance;
 	}
+	
+	public String getInstanceID(){
+		return this.getInstance().getId();
+	}
 }

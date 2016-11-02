@@ -39,6 +39,24 @@
 			    		<th>name</th>
 			    		<th>desc</th>
 			    	</tr>
+			    	<tr>
+			    		<th><input type='checkBox' value='1' name='chkb'></th>
+			    		<th>1</th>
+			    		<th>Name1</th>
+			    		<th>desc1</th>
+			    	</tr>
+			    	<tr>
+			    		<th><input type='checkBox' value='2' name='chkb'></th>
+			    		<th>2</th>
+			    		<th>name2</th>
+			    		<th>desc2</th>
+			    	</tr>
+			    	<tr>
+			    		<th><input type='checkBox' value='3' name='chkb'></th>
+			    		<th>3</th>
+			    		<th>name3</th>
+			    		<th>desc3</th>
+			    	</tr>
 			    </table>
     		</td>
     	</tr>
@@ -57,27 +75,25 @@
     	<tr>
     		<td>处理：</td>
     		<td>
-    		<#list taskObj.completeEntry as completeEntry>
-    			<input type="button" onclick="javascipt:completeTask('${completeEntry.action!''}')" value="${completeEntry.name!'' }"/>
+    		<#list taskObj.FFActionFlows as actionFlow>
+    			<input type="button" onclick="javascipt:completeTask('${actionFlow.action!''}')" value="${actionFlow.name!'' }"/>
     		</#list>
-    		</td>
-    	</tr>
-    	<tr>
-    		<td>接收人：</td>
-    		<td>
-    			<input type="text" name="nextUser" id="nextUser"/>
     		</td>
     	</tr>
     </table>
   </body>
   	<script type="text/javascript">
 		function completeTask(action){
+			var datas = "";
+  			$("input[name='chkb']:checked").each(function(){
+  				datas += $(this).val()+';';
+  			});
   			$.ajax({
 				url : '${basePath}/report/completeTask',
 				dataType : 'json',
 				data : {
 					"task_id" : $("#task_id").val(),
-					"nextUser" : $("#nextUser").val(),
+					"data" : datas,
 					"action" : action
 				},
 				success:function(obj){
@@ -88,6 +104,29 @@
 				error:function(){
 				}
 			});
-		}
+		};
+		
+		 $(document).ready(function(){
+			(function(){
+				$.ajax({
+					url : '${basePath}/report/relationList',
+					dataType : 'json',
+					data : {
+						"task_id":$("#task_id").val()
+					},
+					success:function(obj){
+						$(obj).each(function(index,elem){
+							$("input[name='chkb']").each(function(){
+								if(elem.bussinessId==$(this).val()){
+									$(this).attr("checked",true)
+								}
+							});
+						})
+					},
+					error:function(){
+					}
+				});
+			})();
+		  });
 	</script>
 </html>

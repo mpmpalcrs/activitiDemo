@@ -7,7 +7,7 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ImportResource;
 
 @EnableAutoConfiguration
-@ImportResource({"classpath:activiti.cfg.xml" })
+@ImportResource({"classpath:application-context.xml","classpath:activiti.cfg.xml" })
 public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {

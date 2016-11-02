@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fitechsoft.activiti.domain.ActionFlows;
 import com.fitechsoft.activiti.domain.FDObject;
 
 /**
@@ -20,7 +19,6 @@ import com.fitechsoft.activiti.domain.FDObject;
  */
 @Service
 public class FFTask extends FDObject {
-
     @Autowired
     private TaskService taskService;
     
@@ -42,17 +40,20 @@ public class FFTask extends FDObject {
     		if(!StringUtil.isEmpty(dest)){
     			JSONObject doc = JSONObject.parseObject(dest);
     			this.handleEntry = doc.getString("handleEntry");
-    			//TODO 流程节点处理方式需修改======================
-    			String[] completeStr = doc.getString("completeEntry").split(",");
-    			List<ActionFlows> actionFlows = new ArrayList<>();
+    			this.completeEntry = doc.getString("completeEntry");
+    			this.argname = doc.getString("argname");
+    			
+    			//TODO 流程节点处理方式
+    			String[] completeStr = doc.getString("argvalues").split(",");
+    			List<FFActionFlows> actionFlows = new ArrayList<>();
     			for (String str : completeStr) {
-    				ActionFlows actionFlow = new ActionFlows();
+    				FFActionFlows actionFlow = new FFActionFlows();
     				String[] strs = str.split(":");
     				actionFlow.setName(strs[0]);
     				actionFlow.setAction(strs[1]);
     				actionFlows.add(actionFlow);
     			}
-    			this.completeEntry = actionFlows;
+    			this.FFActionFlows = actionFlows;
     		}
     	}
     }
@@ -72,7 +73,10 @@ public class FFTask extends FDObject {
   	private String assignee;
   	
 	private String handleEntry;
-    private List<ActionFlows> completeEntry;
+	private String completeEntry;
+	//分支判断标记
+	private String argname;
+    private List<FFActionFlows> FFActionFlows;
 
 
     public List<FFTask> getToDoTasksForUser(String proc_def_id_, String user_Id) {
@@ -102,8 +106,34 @@ public class FFTask extends FDObject {
     public FFTask getTaskByTaskId(String taskId) {
         return new FFTask(taskService.createTaskQuery().taskId(taskId).singleResult());
     }
-    public FFTask getTaskByProcInstId(String proc_inst_Id) {
-        return new FFTask(taskService.createTaskQuery().processInstanceId(proc_inst_Id).singleResult());
+//    public FFTask getTaskByProcInstId(String proc_inst_Id) {
+//        return new FFTask(taskService.createTaskQuery().processInstanceId(proc_inst_Id).singleResult());
+//    }
+//    
+//    public FFTask getTaskByProcInst(FFInstance instance) {
+//        return new FFTask(taskService.createTaskQuery().processInstanceId(instance.getInstanceID()).singleResult());
+//    }
+//    
+    public List<FFTask> getTasksByProcInst(FFInstance instance) {
+    	List<Task> tasks = taskService.createTaskQuery().processInstanceId(instance.getInstanceID()).list();
+    	
+    	List<FFTask> fftasks = new ArrayList<>();
+    	
+    	for (int i =0; i< tasks.size();i++){
+    		fftasks.set(i, new FFTask(tasks.get(i)));
+    	}
+        //return new FFTask(taskService.createTaskQuery().processInstanceId(instance.getInstanceID()));
+    	return fftasks;
+    }
+    
+    public List<FFTask> getTasksByProcInstId(String instanceId) {
+    	List<Task> tasks = taskService.createTaskQuery().processInstanceId(instanceId).list();
+    	
+    	List<FFTask> fftasks = new ArrayList<FFTask>();
+    	for (int i =0; i< tasks.size();i++){
+    		fftasks.add(new FFTask(tasks.get(i)));
+    	}
+    	return fftasks;
     }
     
     public void setTaskAssignee(String taskId, String assigneeId) {
@@ -158,10 +188,23 @@ public class FFTask extends FDObject {
 	public void setHandleEntry(String handleEntry) {
 		this.handleEntry = handleEntry;
 	}
-	public List<ActionFlows> getCompleteEntry() {
+	public String getCompleteEntry() {
 		return completeEntry;
 	}
-	public void setCompleteEntry(List<ActionFlows> completeEntry) {
+	public void setCompleteEntry(String completeEntry) {
 		this.completeEntry = completeEntry;
 	}
+	public String getArgname() {
+		return argname;
+	}
+	public void setArgname(String argname) {
+		this.argname = argname;
+	}
+	public List<FFActionFlows> getFFActionFlows() {
+		return FFActionFlows;
+	}
+	public void setFFActionFlows(List<FFActionFlows> fFActionFlows) {
+		FFActionFlows = fFActionFlows;
+	}
+	
 }

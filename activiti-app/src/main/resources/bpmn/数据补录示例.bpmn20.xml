@@ -8,19 +8,19 @@
       <incoming>_10</incoming>
     </endEvent>
     <userTask completionQuantity="1" id="_4" implementation="##unspecified" isForCompensation="false" name="数据校验" startQuantity="1">
-      <documentation id="_4_D_1" textFormat="text/plain"><![CDATA[{completeEntry: '申请补录:commit',handleEntry:'testAct/testForm'}]]></documentation>
+      <documentation id="_4_D_1" textFormat="text/plain"><![CDATA[{argvalues: '申请补录:commit',handleEntry:'testAct/taskForm', completeEntry:'testAct/competeForm'}]]></documentation>
       <incoming>_5</incoming>
       <outgoing>_8</outgoing>
     </userTask>
     <sequenceFlow id="_5" sourceRef="_2" targetRef="_4"/>
     <userTask completionQuantity="1" id="_6" implementation="##unspecified" isForCompensation="false" name="数据补录" startQuantity="1">
-      <documentation id="_6_D_1" textFormat="text/plain"><![CDATA[{completeEntry: '提交:check',handleEntry:'testAct/testForm'}]]></documentation>
+      <documentation id="_6_D_1" textFormat="text/plain"><![CDATA[{argvalues: '提交:check',handleEntry:'testAct/taskForm', completeEntry:'testAct/competeForm'}]]></documentation>
       <incoming>_8</incoming>
       <incoming>_11</incoming>
       <outgoing>_9</outgoing>
     </userTask>
     <userTask completionQuantity="1" id="_7" implementation="##unspecified" isForCompensation="false" name="数据审核" startQuantity="1">
-      <documentation id="_7_D_1" textFormat="text/plain"><![CDATA[{completeEntry: '审核通过:approval,审核拒绝:refuse',handleEntry:'testAct/testForm'}]]></documentation>
+      <documentation id="_7_D_1" textFormat="text/plain"><![CDATA[{argname:'input',argvalues: '审核通过:approval,审核拒绝:refuse', handleEntry:'testAct/taskForm', completeEntry:'testAct/competeForm'}]]></documentation>
       <incoming>_9</incoming>
       <outgoing>_11</outgoing>
       <outgoing>_10</outgoing>

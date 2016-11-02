@@ -21,23 +21,23 @@ import com.fitechsoft.activiti.domain.FDObject;
 public class FFProcess extends FDObject {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
+//    @Autowired
     RepositoryService repositoryService;
-    @Autowired
+//    @Autowired
     RuntimeService runtimeService;
 
     private String processResource;
     private String processName;
     private String deploymentId;
-    private String procDefId;
+    private String processDefId;
     private String category;
 
-    public FFProcess(String deploymentId,String procDefId, String processName, String processResource, String category) {
+    public FFProcess(String deploymentId,String processDefId, String processName, String processResource, String category) {
         this.processName = processName;
         this.processResource = processResource;
         this.category = category;
         this.deploymentId = deploymentId;
-        this.procDefId = procDefId;
+        this.processDefId = processDefId;
     }
 
 	public FFProcess() {
@@ -71,19 +71,19 @@ public class FFProcess extends FDObject {
     public void setCategory(String category) {
         this.category = category;
     }
-
-    public String getProcDefId() {
-		return procDefId;
+	public String getProcessDefId() {
+		return processDefId;
 	}
 
-	public void setProcDefId(String procDefId) {
-		this.procDefId = procDefId;
+	public void setProcessDefId(String processDefId) {
+		this.processDefId = processDefId;
 	}
+
 	/**
 	 * 部署流程定义
 	 */
-	public void deploy() {
-        this.deploymentId = repositoryService.createDeployment()
+	public String deploy() {
+		return this.deploymentId = repositoryService.createDeployment()
                 .addClasspathResource(this.getProcessResource())
                 .category(getCategory())
                 .deploy()
@@ -93,16 +93,17 @@ public class FFProcess extends FDObject {
 	 * 删除流程定义
 	 * @param proc_def_id
 	 */
-	public void delProcDeployment(String proc_def_id) {
-		repositoryService.deleteDeployment(proc_def_id,true);
+	public void delProcDeployment() {
+		repositoryService.deleteDeployment(this.deploymentId,true);
 	}
-    public FFInstance startInstance(String processName,Map variables) {
-        ProcessInstance instance = runtimeService.startProcessInstanceByKey(processName, variables);
+    public FFInstance startInstance(Map variables) {
+        ProcessInstance instance = runtimeService.startProcessInstanceByKey(this.getProcessName(), variables);
         logger.debug("发起了一个流程实例，processInstanceId = " + instance.getProcessInstanceId());
         return new FFInstance(instance);
     }
-    public FFInstance startInstance(String processDefId) {
-        ProcessInstance instance = runtimeService.startProcessInstanceById(processDefId);
+    
+    public FFInstance startInstance() {
+        ProcessInstance instance = runtimeService.startProcessInstanceById(this.getProcessDefId());
         logger.debug("发起了一个流程实例，processInstanceId = " + instance.getProcessInstanceId());
         return new FFInstance(instance);
     }
@@ -116,4 +117,11 @@ public class FFProcess extends FDObject {
         return runtimeService.createProcessInstanceQuery().processDefinitionId(this.getDeploymentId()).list();
     }
 
+	public void setRuntimeService(RuntimeService runtimeService) {
+		this.runtimeService = runtimeService;
+	}
+
+	public void setRepositoryService(RepositoryService repositoryService) {
+		this.repositoryService = repositoryService;
+	}
 }
